@@ -1,0 +1,209 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="card p-4 shadow-sm mb-4 border-0 rounded-3">
+    <form action="/input" method="post" enctype="multipart/form-data">
+        <div class="row g-3">
+            <div class="col-md-2">
+                <label class="form-label">Nomor Tower</label>
+                <input type="text" name="tower" class="form-control" placeholder="-- Contoh: T.001 --" required>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Informasi Sirkit</label>
+                <input type="text" name="circuit" class="form-control" placeholder="-- Contoh: Cempaka - Ulin --" required>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Aksesoris</label>
+                <input type="text" name="accessory" class="form-control" placeholder="-- Contoh: Clamp --" required>
+            </div>            <div class="col-md-2">
+                <label class="form-label">Tanggal Inspeksi</label>
+                <input type="date" name="date" class="form-control" required>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label d-flex align-items-center gap-1">
+                    Level Korosifitas
+                    <i class="fas fa-question-circle text-muted" 
+                       style="cursor: pointer;" 
+                       data-bs-toggle="popover" 
+                       data-bs-trigger="hover focus" 
+                       data-bs-html="true"
+                       title="Informasi ISO 9223" 
+                       data-bs-content="<div style='font-size: 0.85rem;'>
+                         <strong>C1 (Sangat Rendah):</strong> Kerusakan hampir tidak ada.<br>
+                         <strong>C2 (Rendah):</strong> Polusi rendah, area pedesaan.<br>
+                         <strong>C3 (Sedang):</strong> Polusi sedang, area perkotaan.<br>
+                         <strong>C4 (Tinggi):</strong> Polusi tinggi, daerah pesisir.<br>
+                         <strong>C5 (Sangat Tinggi):</strong> Polusi industri ekstrem/offshore.<br>
+                         <strong>CX (Ekstrem):</strong> Lepas pantai, atmosfer sangat agresif.
+                       </div>"></i>
+                </label>
+                <select name="level" class="form-select">
+                    <option value="C1">C1</option>
+                    <option value="C2">C2</option>
+                    <option value="C3">C3</option>
+                    <option value="C4">C4</option>
+                    <option value="C5">C5</option>
+                    <option value="CX">CX</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Foto Aksesoris</label>
+                <input type="file" name="photo" class="form-control" accept="image/*" required>
+            </div>
+            </div>
+            <div class="text-center mt-4">
+            <button type="submit" class="btn btn-success px-5 fw-bold">INPUT DATA</button>
+            </div>
+            </form>
+            </div>
+
+            <div class="card p-4 shadow-sm border-0 rounded-3">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-muted">Showing <span id="itemCount">{{ items|length }}</span> Item(s).</span>
+            <div class="search-container">
+                <i class="fas fa-search"></i>
+                <input type="text" id="tableSearch" class="form-control search-input" placeholder="Cari data (Tower, Aksesoris, Status...)...">
+            </div>
+            </div>
+            <div class="table-responsive">
+            <table class="table align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Nomor Tower</th>
+                    <th>Informasi Sirkit</th>
+                    <th>Aksesoris</th>
+                    <th>Tanggal Inspeksi</th>
+                    <th>
+                        Level Korosifitas 
+                        <div class="dropdown d-inline ms-1">
+                            <i class="fas fa-filter text-muted small" style="cursor:pointer" data-bs-toggle="dropdown"></i>
+                            <div class="dropdown-menu p-3 shadow-sm border-0" style="min-width: 150px; border-radius: 10px;" onclick="event.stopPropagation()">
+                                <div class="filter-options-level">
+                                    <div class="form-check"><input class="form-check-input filter-check" type="checkbox" value="C1" id="filterC1"> <label for="filterC1">C1</label></div>
+                                    <div class="form-check"><input class="form-check-input filter-check" type="checkbox" value="C2" id="filterC2"> <label for="filterC2">C2</label></div>
+                                    <div class="form-check"><input class="form-check-input filter-check" type="checkbox" value="C3" id="filterC3"> <label for="filterC3">C3</label></div>
+                                    <div class="form-check"><input class="form-check-input filter-check" type="checkbox" value="C4" id="filterC4"> <label for="filterC4">C4</label></div>
+                                    <div class="form-check"><input class="form-check-input filter-check" type="checkbox" value="C5" id="filterC5"> <label for="filterC5">C5</label></div>
+                                    <div class="form-check"><input class="form-check-input filter-check" type="checkbox" value="CX" id="filterCX"> <label for="filterCX">CX</label></div>
+                                </div>
+                            </div>
+                        </div>
+                    </th>
+                    <th>Presentase</th>
+                    <th>Estimasi Umur</th>
+                    <th>
+                        Status 
+                        <div class="dropdown d-inline ms-1">
+                            <i class="fas fa-filter text-muted small" style="cursor:pointer" data-bs-toggle="dropdown"></i>
+                            <div class="dropdown-menu p-3 shadow-sm border-0" style="min-width: 150px; border-radius: 10px;" onclick="event.stopPropagation()">
+                                <div class="filter-options-status">
+                                    <div class="form-check"><input class="form-check-input filter-check" type="checkbox" value="Aman" id="statusAman"> <label for="statusAman">Aman</label></div>
+                                    <div class="form-check"><input class="form-check-input filter-check" type="checkbox" value="Waspada" id="statusWaspada"> <label for="statusWaspada">Waspada</label></div>
+                                    <div class="form-check"><input class="form-check-input filter-check" type="checkbox" value="Kritis" id="statusKritis"> <label for="statusKritis">Kritis</label></div>
+                                </div>
+                            </div>
+                        </div>
+                    </th>
+                    <th>Tindakan</th>
+                    <th>Gambar</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ item.tower_id }}</td>
+                    <td>{{ item.circuit }}</td>
+                    <td>{{ item.accessory }}</td>
+                    <td>{{ item.date }}</td>
+                    <td>{{ item.level }}</td>
+                    <td>{{ item.ai_percentage|round(1) }}%</td>
+                    <td>{{ item.remaining_life }}</td>
+                    <td><span class="{{ item.color }} fw-bold">{{ item.status }}</span></td>
+                    <td>{{ item.action }}</td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <a href="{{ item.image_url }}" target="_blank">
+                                <i class="fas fa-image text-primary"></i>
+                            </a>
+                            <button class="btn btn-danger btn-sm rounded-2 shadow-sm" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#deleteModal" 
+                                    onclick="setDeleteTarget('{{ item.public_id }}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow" style="border-radius: 15px;">
+            <div class="modal-body text-center p-4">
+                <h5 class="modal-title d-none" id="deleteModalLabel">Konfirmasi Hapus</h5>
+                <p class="fs-5 mb-4 fw-bold">Apakah anda yakin ingin menghapus data ini?<br>
+                <span class="text-muted fw-normal small">(data akan terhapus secara permanen)</span></p>
+                <div class="d-flex justify-content-center gap-3">
+                    <form id="deleteForm" method="POST">
+                        <button type="submit" class="btn btn-danger px-4 py-2 fw-bold" style="border-radius: 8px;">YA</button>
+                    </form>
+                    <button class="btn btn-primary px-4 py-2 fw-bold" data-bs-dismiss="modal" style="border-radius: 8px; background-color: #00A2E9;">TIDAK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function setDeleteTarget(id) {
+        const form = document.getElementById('deleteForm');
+        if (form) {
+            form.action = '/delete/' + id;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('tableSearch');
+        const checkboxes = document.querySelectorAll('.filter-check');
+        const tableBody = document.querySelector('table tbody');
+        const itemCount = document.getElementById('itemCount');
+        const rows = tableBody ? tableBody.querySelectorAll('tr') : [];
+
+        function filterTable() {
+            const query = searchInput.value.toLowerCase();
+            const checkedLevels = Array.from(document.querySelectorAll('.filter-options-level .filter-check:checked')).map(c => c.value);
+            const checkedStatus = Array.from(document.querySelectorAll('.filter-options-status .filter-check:checked')).map(c => c.value);
+            
+            let visibleCount = 0;
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                // Indices: 5 is Level, 8 is Status
+                const levelCell = row.cells[5].textContent.trim();
+                const statusCell = row.cells[8].textContent.trim();
+
+                const matchesSearch = text.includes(query);
+                const matchesLevel = checkedLevels.length === 0 || checkedLevels.includes(levelCell);
+                const matchesStatus = checkedStatus.length === 0 || checkedStatus.includes(statusCell);
+
+                if (matchesSearch && matchesLevel && matchesStatus) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            if (itemCount) itemCount.textContent = visibleCount;
+        }
+
+        if (searchInput) searchInput.addEventListener('input', filterTable);
+        checkboxes.forEach(cb => cb.addEventListener('change', filterTable));
+    });
+</script>
+{% endblock %}

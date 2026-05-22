@@ -1,0 +1,26 @@
+/* Custom styles for PLN UIP3BKAL CORROSION MONITORING Dashboard */
+:root {
+    --pln-blue: #00A2E9;
+    --pln-bg: #f4f7f6;
+}
+
+body {
+    background-color: var(--pln-bg);
+}
+
+.navbar {
+    background-color: var(--pln-blue) !important;
+    color: white;
+}
+
+.badge-custom {
+    background-color: #0077b6;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
+}
+
+.search-container { position: relative; max-width: 400px; }
+.search-container i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #aaa; }
+.search-input { padding-left: 35px; border-radius: 20px; border: 1px solid #ddd; }
+.search-input:focus { border-color: #00A2E9; box-shadow: 0 0 0 0.2rem rgba(0, 162, 233, 0.25); }

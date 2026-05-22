@@ -1,0 +1,94 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="row g-4">
+    <!-- Card Atas: Pie Chart -->
+    <div class="col-md-6">
+        <div class="card p-4 shadow-sm border-0 rounded-3 h-100">
+            <h5 class="fw-bold text-secondary mb-4 border-start border-4 border-info ps-2">Grafik Status Aksesoris</h5>
+            <div style="height: 300px; display: flex; justify-content: center;">
+                <canvas id="pieChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card Bawah: Bar Chart -->
+    <div class="col-md-6">
+        <div class="card p-4 shadow-sm border-0 rounded-3 h-100">
+            <h5 class="fw-bold text-secondary mb-4 border-start border-4 border-info ps-2">Grafik Jumlah Aksesoris</h5>
+            <div style="height: 300px;">
+                <canvas id="barChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Data for Pie Chart
+        const statusData = {
+            labels: ['Aman', 'Waspada', 'Kritis'],
+            datasets: [{
+                data: [
+                    {{ status_data['Aman'] }}, 
+                    {{ status_data['Waspada'] }}, 
+                    {{ status_data['Kritis'] }}
+                ],
+                backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                borderWidth: 1
+            }]
+        };
+
+        // Initialize Pie Chart
+        const pieCtx = document.getElementById('pieChart').getContext('2d');
+        new Chart(pieCtx, {
+            type: 'pie',
+            data: statusData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+
+        // Data for Bar Chart
+        const accLabels = [];
+        const accValues = [];
+        {% for acc, count in acc_data.items() %}
+            accLabels.push('{{ acc }}');
+            accValues.push({{ count }});
+        {% endfor %}
+
+        const barData = {
+            labels: accLabels,
+            datasets: [{
+                label: 'Jumlah Unit',
+                data: accValues,
+                backgroundColor: '#00A2E9',
+                borderRadius: 5
+            }]
+        };
+
+        // Initialize Bar Chart
+        const barCtx = document.getElementById('barChart').getContext('2d');
+        new Chart(barCtx, {
+            type: 'bar',
+            data: barData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: { 
+                        beginAtZero: true,
+                        ticks: { stepSize: 1 }
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}
